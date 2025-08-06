@@ -1,27 +1,20 @@
-fsldir = getenv('FSLDIR');
-fslmatlab = sprintf('%s/etc/matlab', fsldir);
-addpath(fslmatlab);
-
-edit(fullfile(userpath,'startup.m'))
-
-% โค้ดสำหรับเชื่อมต่อ FSL กับ MATLAB
+% โค้ดเชื่อมต่อ FSL กับ MATLAB (แบบระบุ Path ตรงๆ)
 clc;
-fprintf('กำลังเชื่อมต่อ FSL กับ MATLAB...\n');
+fprintf('กำลังเชื่อมต่อ FSL กับ MATLAB แบบระบุ Path โดยตรง...\n');
 
-% 1. ดึงที่อยู่ของ FSL จาก Environment Variable ของระบบ ('FSLDIR')
-fsldir = getenv('FSLDIR');
+% !!! แก้ไข Path ตรงนี้ให้เป็นที่อยู่ FSL ใน WSL ของคุณ !!!
+% รูปแบบ: \\wsl$\<ชื่อ Distribution>\path\to\fsl
+fsldir = '\\wsl$\Ubuntu\usr\local\fsl';
 
-% 2. ตรวจสอบว่าหา FSLDIR เจอหรือไม่
-if isempty(fsldir)
-    error('❌ ไม่พบ Environment Variable "FSLDIR" ของ FSL\nกรุณาตรวจสอบว่าคุณติดตั้ง FSL และตั้งค่า Shell ถูกต้องแล้ว');
+% ตรวจสอบว่า Path ที่ระบุมีอยู่จริงหรือไม่
+if ~isfolder(fsldir)
+    error('❌ ไม่พบโฟลเดอร์ FSL ที่ Path ที่ระบุ\nกรุณาตรวจสอบ Path อีกครั้ง: %s', fsldir);
 end
 
-% 3. สร้าง Path เต็มไปยังโฟลเดอร์ยูทิลิตี้ของ MATLAB ภายใน FSL
-%    ใช้ fullfile เพื่อความเข้ากันได้กับทุกระบบปฏิบัติการ
+% สร้าง Path ไปยังโฟลเดอร์ยูทิลิตี้
 fsl_matlab_path = fullfile(fsldir, 'etc', 'matlab');
 
-% 4. เพิ่ม Path ที่สร้างขึ้นเข้าไปในรายการ Path ของ MATLAB
+% เพิ่ม Path เข้าไปใน MATLAB
 addpath(fsl_matlab_path);
 
 fprintf('✅ เชื่อมต่อสำเร็จ! MATLAB รู้จัก Path ของ FSL แล้ว\n');
-fprintf('   ที่อยู่: %s\n', fsl_matlab_path);
